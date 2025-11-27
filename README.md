@@ -47,7 +47,7 @@ The following pins are configured in `platformio.ini` for external TFT display:
 |-----|----------|
 | GPIO19 | MOSI |
 | GPIO18 | SCLK |
-| GPIO5 | CS |
+| GPIO12 | CS |
 | GPIO16 | DC |
 | GPIO23 | RST |
 | GPIO4 | Backlight |

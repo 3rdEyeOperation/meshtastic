@@ -83,6 +83,7 @@ void setup() {
     if (state == RADIOLIB_ERR_NONE) {
         Serial.println(F("[SX1262] Listening for RF signals..."));
         displayScanning(SCAN_FREQUENCY);
+        lastDisplayUpdate = millis();  // Initialize display timing after showing scanning screen
     } else {
         Serial.print(F("[SX1262] Receive failed, code "));
         Serial.println(state);
