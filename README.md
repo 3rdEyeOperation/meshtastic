@@ -49,6 +49,43 @@ The SX1262 operates in sub-GHz bands. Many consumer drones use 2.4 GHz / 5.8 GHz
 
 See the full documentation for setup and usage instructions.
 
+## Building the Documentation Site
+
+This repository contains the documentation website built with [Docusaurus](https://docusaurus.io/).
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) v23.1.0 or later (see `.nvmrc`)
+- [pnpm](https://pnpm.io/) package manager
+
+### Installation
+
+```bash
+pnpm install
+```
+
+### Development
+
+Start a local development server with hot reloading:
+
+```bash
+pnpm start
+```
+
+### Production Build
+
+Build the static site for production:
+
+```bash
+pnpm run build
+```
+
+Serve the production build locally:
+
+```bash
+pnpm run serve
+```
+
 ## Resources
 
 - [RadioLib Library](https://github.com/jgromes/RadioLib)
