@@ -129,8 +129,7 @@ void loop() {
     }
     
     // Return to scanning display after detection timeout
-    // Cast handles millis() overflow correctly (wraps every ~49 days)
-    if ((unsigned long)(millis() - lastDisplayUpdate) > DISPLAY_UPDATE_INTERVAL) {
+    if (millis() - lastDisplayUpdate > DISPLAY_UPDATE_INTERVAL) {
         displayScanning(SCAN_FREQUENCY);
         lastDisplayUpdate = millis();
     }

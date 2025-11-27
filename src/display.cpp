@@ -122,7 +122,7 @@ void displayDetection(float rssi, float snr, float freqError) {
     // Visual alert bar
     tft.fillRect(10, 105, DISPLAY_WIDTH - 20, 15, COLOR_ALERT);
     tft.setTextColor(COLOR_BG, COLOR_ALERT);
-    tft.setCursor(80, 108);
+    tft.setCursor((DISPLAY_WIDTH - 36) / 2, 108);  // Center "SIGNAL" text (~36px wide at size 1)
     tft.println("SIGNAL");
 }
 
