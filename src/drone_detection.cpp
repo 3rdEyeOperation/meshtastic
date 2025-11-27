@@ -11,6 +11,7 @@
  */
 
 #include "drone_detection.h"
+#include <math.h>
 
 // ============================================================================
 // Module State
@@ -243,6 +244,9 @@ ModulationType switchToNextModulation(SX1262* radio, float frequency) {
         return currentModulation;
     }
     
+    // Update module state with new modulation
+    currentModulation = nextMod;
+    
     return nextMod;
 }
 
@@ -254,12 +258,17 @@ ModulationType switchToNextModulation(SX1262* radio, float frequency) {
  * Match signal against known drone signatures
  * Returns the matching signature index or -1 if no match
  */
-static int matchSignature(float rssi, ModulationType modulation) {
+static int matchSignature(float rssi, float frequency, ModulationType modulation) {
     for (size_t i = 0; i < NUM_SIGNATURES; i++) {
         const DroneSignature* sig = &knownSignatures[i];
         
         // Check modulation type match
         if (sig->modulation != modulation) {
+            continue;
+        }
+        
+        // Check frequency is within signature's expected range
+        if (frequency < sig->frequencyMin || frequency > sig->frequencyMax) {
             continue;
         }
         
@@ -298,8 +307,9 @@ static uint8_t calculateConfidence(float rssi, float snr, float freqError) {
     
     // Frequency error contribution (lower error = higher confidence)
     // Scale: <1kHz = 20%, >10kHz = 0%
-    if (abs(freqError) < 10000.0f) {
-        float freqScore = (10000.0f - abs(freqError)) / 10000.0f * 20.0f;
+    float absFreqError = fabsf(freqError);
+    if (absFreqError < 10000.0f) {
+        float freqScore = (10000.0f - absFreqError) / 10000.0f * 20.0f;
         confidence += (uint8_t)max(freqScore, 0.0f);
     }
     
@@ -326,7 +336,8 @@ bool analyzeDroneSignal(float rssi, float snr, float freqError,
     signal->confidence = calculateConfidence(rssi, snr, freqError);
     
     // Try to match against known drone signatures
-    int matchIndex = matchSignature(rssi, currentMod);
+    // Use the center frequency for matching (signal->frequency)
+    int matchIndex = matchSignature(rssi, signal->frequency, currentMod);
     
     if (matchIndex >= 0) {
         signal->isDroneSignature = true;
