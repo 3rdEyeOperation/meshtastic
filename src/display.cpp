@@ -76,7 +76,7 @@ void displayScanning(float frequency) {
     tft.println("Listening for RF signals...");
     
     // Visual indicator
-    tft.drawRect(10, 100, 220, 20, COLOR_SUCCESS);
+    tft.drawRect(10, 100, DISPLAY_WIDTH - 20, 20, COLOR_SUCCESS);
 }
 
 void displayDetection(float rssi, float snr, float freqError) {
@@ -120,7 +120,7 @@ void displayDetection(float rssi, float snr, float freqError) {
     tft.println(detectionCount);
     
     // Visual alert bar
-    tft.fillRect(10, 105, 220, 15, COLOR_ALERT);
+    tft.fillRect(10, 105, DISPLAY_WIDTH - 20, 15, COLOR_ALERT);
     tft.setTextColor(COLOR_BG, COLOR_ALERT);
     tft.setCursor(80, 108);
     tft.println("SIGNAL");
