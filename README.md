@@ -2,13 +2,13 @@
 
 # 🛸 Drone Detector
 
-An open source drone detection system using RF signal analysis with T-Beam S3-Core and RadioLib.
+An open source drone detection system using RF signal analysis with LILYGO T-Beam Supreme and RadioLib.
 
 </div>
 
 ## Overview
 
-The Drone Detector identifies drones by matching their RF communication signatures against known frequency ranges and modulation patterns. Built on the LILYGO T-Beam S3-Core hardware with the RadioLib library.
+The Drone Detector identifies drones by matching their RF communication signatures against known frequency ranges and modulation patterns. Built on the LILYGO T-Beam Supreme hardware with the RadioLib library.
 
 ## Features
 
@@ -20,7 +20,7 @@ The Drone Detector identifies drones by matching their RF communication signatur
 
 ## Hardware
 
-**Required:** LILYGO T-Beam S3-Core
+**Required:** LILYGO T-Beam Supreme
 
 | Component | Specification |
 |-----------|---------------|
@@ -49,10 +49,38 @@ The SX1262 operates in sub-GHz bands. Many consumer drones use 2.4 GHz / 5.8 GHz
 
 See the full documentation for setup and usage instructions.
 
+## Building with PlatformIO
+
+### Prerequisites
+
+- [PlatformIO](https://platformio.org/) IDE or CLI
+
+### Build and Upload
+
+Build the firmware:
+
+```bash
+pio run
+```
+
+Upload to the device:
+
+```bash
+pio run --target upload
+```
+
+### Serial Monitor
+
+Monitor device output:
+
+```bash
+pio device monitor
+```
+
 ## Resources
 
 - [RadioLib Library](https://github.com/jgromes/RadioLib)
-- [LILYGO T-Beam](https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series)
+- [LILYGO T-Beam Supreme](https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series)
 - [SX1262 Datasheet](https://www.semtech.com/products/wireless-rf/lora-connect/sx1262)
 
 ## License
