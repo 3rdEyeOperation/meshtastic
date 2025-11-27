@@ -45,23 +45,21 @@ The SX1262 operates in sub-GHz bands. Many consumer drones use 2.4 GHz / 5.8 GHz
 - Sub-GHz telemetry links
 - 433/868/915 MHz control systems
 
-## Documentation
-
-See the full documentation for setup and usage instructions.
-
 ## Building with PlatformIO
 
 ### Prerequisites
 
 - [PlatformIO](https://platformio.org/) IDE or CLI
 
-### Build and Upload
+### Build
 
 Build the firmware:
 
 ```bash
 pio run
 ```
+
+### Upload
 
 Upload to the device:
 
@@ -75,6 +73,16 @@ Monitor device output:
 
 ```bash
 pio device monitor
+```
+
+## Project Structure
+
+```
+├── platformio.ini    # PlatformIO configuration
+├── src/
+│   └── main.cpp      # Main firmware source
+├── include/          # Header files
+└── lib/              # Project-specific libraries
 ```
 
 ## Resources

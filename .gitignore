@@ -1,13 +1,13 @@
-# Project specific
-node_modules/
-CrowdInTranslations*
-*.Identifier
-.docusaurus
-build
-.vercel
-.env
-.pnpm-debug.log
-static/documents/pdf
+# PlatformIO
+.pio/
+.pioenvs/
+.piolibdeps/
+
+# Build artifacts
+.pio/build/
+*.elf
+*.bin
+*.hex
 
 # macOS
 .DS_Store
@@ -29,3 +29,4 @@ gen
 *.vsix
 *.code-workspace
 .trunk/
+_codeql_detected_source_root
