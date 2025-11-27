@@ -1,0 +1,155 @@
+---
+id: usage
+title: Usage Guide
+sidebar_label: Usage
+slug: /usage
+sidebar_position: 4
+description: How to use the Drone Detector for scanning and detecting drone signals
+---
+
+# Usage Guide
+
+This guide covers how to operate the Drone Detector using the button interface and menu system.
+
+:::warning Hardware Frequency Limitation
+Your T-Beam S3-Core can only detect signals in its specific frequency band (433, 868, or 915 MHz). Most consumer drones use 2.4 GHz or 5.8 GHz which **cannot be detected** by this hardware. See [Drone Frequencies](/docs/drone-frequencies) for details on what can be detected.
+:::
+
+## Button Controls
+
+The T-Beam S3-Core has three buttons for device control:
+
+| Button | Location | Functions |
+|--------|----------|-----------|
+| **Power** | Middle | Long press to power on/off |
+| **Reset** | Right | Single press to restart device |
+| **User** | Left | Menu navigation and selection |
+
+### User Button Actions
+
+| Action | Function |
+|--------|----------|
+| Single press | Next menu item / Change screen |
+| Double press | Select / Confirm |
+| Long press (3s) | Start/Stop scanning |
+| Triple press | Switch frequency band |
+
+## Main Menu
+
+The device displays the following menu options:
+
+1. **Scan** - Start RF scanning for drone signals
+2. **Frequencies** - Configure frequency ranges to scan
+3. **Detected** - View list of detected signals
+4. **Settings** - Device configuration options
+5. **GPS** - View current GPS location and status
+
+## Scanning for Drones
+
+### Starting a Scan
+
+1. From the main menu, navigate to **Scan** using single button presses
+2. Double press to select
+3. Or use long press from any screen to quick-start scanning
+
+### During Scanning
+
+The display shows:
+- Current frequency being scanned
+- Signal strength indicator (RSSI)
+- Number of signals detected
+- Scan progress
+
+When a potential drone signal is detected:
+- Audio/visual alert (if enabled)
+- Signal added to detection list
+- GPS coordinates logged
+
+### Stopping a Scan
+
+- Long press the User button to stop scanning
+- Or press Reset to restart the device
+
+## Frequency Configuration
+
+The detector scans within the frequency band of your device variant:
+
+### 433 MHz Variant
+- Range: 433.0 - 434.8 MHz
+- Common uses: European drone telemetry, some remote controls
+
+### 868 MHz Variant
+- Range: 868.0 - 870.0 MHz
+- Common uses: European ISM band, some drone systems
+
+### 915 MHz Variant
+- Range: 902.0 - 928.0 MHz
+- Common uses: US ISM band, LoRa drones, some control systems
+
+## Detection List
+
+The **Detected** menu shows all signals identified as potential drone communications:
+
+For each detection:
+- **Frequency**: Exact frequency of the signal
+- **RSSI**: Signal strength in dBm
+- **Modulation**: Detected modulation type
+- **Time**: Timestamp of detection
+- **GPS**: Location coordinates (if GPS locked)
+- **Match**: Drone type if signature matched
+
+## Drone Signature Database
+
+The detector matches signals against known drone RF signatures:
+
+| Drone Type | Frequency Range | Modulation | Notes |
+|------------|-----------------|------------|-------|
+| DJI (some models) | 900-930 MHz | FHSS | OcuSync telemetry |
+| Long-range FPV | 433 MHz | LoRa/FSK | Custom builds |
+| Agricultural drones | 868/915 MHz | LoRa | Telemetry links |
+| Racing drones | Various | FSK | Some control systems |
+
+## Settings Menu
+
+Configure device behavior:
+
+- **Scan Speed**: Fast/Normal/Thorough
+- **Alert Mode**: Visual/Audio/Both/None
+- **Auto-scan**: Enable scanning on boot
+- **Display**: Brightness and timeout
+- **GPS**: Enable/disable GPS logging
+
+## Tips for Effective Detection
+
+1. **Antenna Positioning**: Keep the antenna vertical for best reception
+2. **Location**: Higher positions provide better RF visibility
+3. **Interference**: Move away from other electronic devices
+4. **Scan Duration**: Longer scans catch intermittent transmissions
+5. **Multiple Bands**: If possible, use multiple devices for different bands
+
+## Understanding RSSI Values
+
+| RSSI (dBm) | Signal Quality | Typical Range |
+|------------|----------------|---------------|
+| -30 to -50 | Excellent | Very close (under 100m) |
+| -50 to -70 | Good | Close (100-500m) |
+| -70 to -90 | Fair | Medium (500m-1km) |
+| -90 to -110 | Weak | Far (1km+) |
+| Below -110 | Very weak | At detection limit |
+
+## Troubleshooting
+
+### No signals detected
+- Verify antenna is properly connected
+- Check you're in an area with drone activity
+- Ensure correct frequency band for your region
+- Try increasing scan duration
+
+### GPS not locking
+- Move to an area with clear sky view
+- Wait 2-3 minutes for initial lock
+- GPS works best outdoors
+
+### Device not responding
+- Press Reset button to restart
+- If unresponsive, disconnect and reconnect power

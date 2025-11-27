@@ -1,0 +1,86 @@
+---
+id: introduction
+title: Introduction
+sidebar_label: Introduction
+slug: /introduction
+sidebar_position: 1
+description: Drone Detector - An open source RF-based drone detection system using T-Beam S3-Core and RadioLib
+---
+
+# Drone Detector
+
+An open source drone detection system that uses RF signal analysis to identify and classify drones based on their communication frequency and modulation patterns.
+
+## Overview
+
+The Drone Detector is built on the **LILYGO T-Beam S3-Core** hardware platform, leveraging the powerful **RadioLib** library for comprehensive RF signal detection and analysis. The system identifies drones by matching their RF signatures against known frequency ranges and modulation types.
+
+## How It Works
+
+Drones communicate with their controllers using radio frequencies. Each drone manufacturer and model uses specific:
+
+1. **Frequency Bands** - The radio spectrum where the drone operates
+2. **Modulation Types** - How data is encoded in the radio signal (FHSS, DSSS, OFDM, etc.)
+3. **Signal Patterns** - Unique characteristics of the transmission
+
+The Drone Detector continuously scans supported frequency bands, analyzes incoming signals, and matches them against a database of known drone RF signatures.
+
+## Detection Method
+
+The detection process works by:
+
+1. **Scanning** - Sweeping through frequency ranges using the SX1262 transceiver
+2. **Signal Detection** - Identifying RF energy above the noise floor
+3. **Modulation Analysis** - Determining the modulation type of detected signals
+4. **Pattern Matching** - Comparing detected signals against known drone signatures
+5. **Classification** - Identifying the drone type based on frequency/modulation match
+
+## Supported Hardware
+
+This project is designed exclusively for the **T-Beam S3-Core** device:
+
+| Component | Specification |
+|-----------|---------------|
+| MCU | ESP32-S3 (WiFi & Bluetooth 5 LE) |
+| Radio | Semtech SX1262 LoRa Transceiver |
+| Frequencies | 433 MHz, 868 MHz, or 915 MHz (device variant) |
+| GPS | NEO-M10S or Quectel L76K |
+| Interface | OLED Display, User Button, USB-C |
+
+## Key Features
+
+- **Multi-frequency scanning** within the device's supported band
+- **Real-time signal analysis** using RadioLib
+- **Button-based menu navigation** for standalone operation
+- **GPS location logging** for detected signals
+- **Modulation detection** for drone classification
+- **Low power operation** suitable for field deployment
+
+## RadioLib Integration
+
+This project uses [RadioLib](https://github.com/jgromes/RadioLib), a universal wireless communication library that provides:
+
+- Support for SX1262 and many other radio modules
+- Flexible modulation configuration (LoRa, FSK, OOK, etc.)
+- Signal strength (RSSI) and quality measurements
+- Frequency scanning and channel activity detection
+
+## Limitations
+
+:::warning Important Hardware Limitation
+The T-Beam S3-Core with SX1262 operates **only in sub-GHz bands** (433, 868, or 915 MHz depending on your device variant). 
+
+**Most consumer drones (DJI, Skydio, etc.) operate on 2.4 GHz or 5.8 GHz, which cannot be detected by this hardware.** Detection of these frequencies requires different radio hardware.
+:::
+
+This project is designed to detect drones and drone systems that use sub-GHz frequencies, including:
+
+- Long-range FPV control links (ExpressLRS, Crossfire, mLRS)
+- Telemetry downlinks (SiK, MAVLink radios)
+- Agricultural and commercial drone systems
+- Custom/DIY drone builds using LoRa
+- Some older or specialized drone control systems
+
+## Getting Started
+
+Ready to build your Drone Detector? See the [Getting Started](/docs/getting-started) guide.

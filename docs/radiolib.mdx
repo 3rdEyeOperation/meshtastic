@@ -1,0 +1,225 @@
+---
+id: radiolib
+title: RadioLib Integration
+sidebar_label: RadioLib
+slug: /radiolib
+sidebar_position: 5
+description: How RadioLib is used for RF signal detection and analysis in the Drone Detector
+---
+
+# RadioLib Integration
+
+The Drone Detector uses [RadioLib](https://github.com/jgromes/RadioLib) for all RF operations. RadioLib is a universal wireless communication library that supports the SX1262 transceiver in the T-Beam S3-Core.
+
+## About RadioLib
+
+RadioLib provides:
+
+- **Multi-platform support** - Works with ESP32, Arduino, and many other platforms
+- **Multiple radio modules** - Supports SX1262, SX1276, CC1101, and many more
+- **Flexible modulation** - LoRa, FSK, OOK, GFSK, and other modes
+- **Advanced features** - CAD, RSSI, frequency scanning, packet handling
+
+GitHub: [https://github.com/jgromes/RadioLib](https://github.com/jgromes/RadioLib)
+
+## SX1262 Capabilities
+
+The Semtech SX1262 in the T-Beam S3-Core provides:
+
+| Feature | Specification |
+|---------|---------------|
+| Frequency Range | 150 MHz - 960 MHz |
+| Modulation | LoRa, FSK, GFSK, MSK, GMSK, OOK |
+| Bandwidth (LoRa) | 7.8 - 500 kHz |
+| Spreading Factor | SF5 - SF12 |
+| TX Power | Up to +22 dBm |
+| Sensitivity | Down to -148 dBm |
+| RSSI Resolution | 1 dB |
+
+## Key RadioLib Functions Used
+
+### Initialization
+
+```cpp
+#include <RadioLib.h>
+
+// SX1262 pin configuration for T-Beam S3-Core
+Module mod(LORA_CS, LORA_IRQ, LORA_RST, LORA_BUSY);
+SX1262 radio(&mod);
+
+void setup() {
+  // Initialize with frequency, bandwidth, SF, CR, sync word, power
+  int state = radio.begin(915.0, 125.0, 9, 7, 0x12, 10);
+  if (state != RADIOLIB_ERR_NONE) {
+    // Handle initialization error
+  }
+}
+```
+
+### Channel Activity Detection (CAD)
+
+CAD is used to detect if there's activity on a frequency:
+
+```cpp
+// Perform CAD - returns true if channel is active
+int state = radio.scanChannel();
+if (state == RADIOLIB_LORA_DETECTED) {
+  // Signal detected on this frequency
+  float rssi = radio.getRSSI();
+  // Process detection...
+}
+```
+
+### Frequency Scanning
+
+Sweep through frequencies to find signals:
+
+```cpp
+void scanFrequencyRange(float startFreq, float endFreq, float step) {
+  for (float freq = startFreq; freq <= endFreq; freq += step) {
+    radio.setFrequency(freq);
+    
+    int state = radio.scanChannel();
+    if (state == RADIOLIB_LORA_DETECTED) {
+      float rssi = radio.getRSSI();
+      logDetection(freq, rssi);
+    }
+  }
+}
+```
+
+### RSSI Measurement
+
+Get signal strength for detected signals:
+
+```cpp
+float rssi = radio.getRSSI();        // Instantaneous RSSI
+float snr = radio.getSNR();          // Signal-to-noise ratio (LoRa only)
+```
+
+### Modulation Configuration
+
+Switch between modulation modes for detection:
+
+```cpp
+// Configure for LoRa mode
+radio.begin(915.0, 125.0, 9, 7, 0x12, 10);
+
+// Switch to FSK mode
+radio.beginFSK(915.0, 4.8, 5.0, 10.0, 10, 16, false);
+
+// FSK parameters: freq, bitrate, freqDev, rxBW, power, preambleLen, datashaping
+```
+
+## Modulation Detection Strategy
+
+Different drone systems use different modulations. The detector cycles through configurations:
+
+### LoRa Detection
+```cpp
+// Wide bandwidth for initial detection
+radio.begin(freq, 500.0, 7, 5, 0x12, 10);
+radio.scanChannel();
+```
+
+### FSK Detection
+```cpp
+// Common FSK settings
+radio.beginFSK(freq, 50.0, 25.0, 50.0, 10, 8, false);
+// Use RSSI to detect signal presence
+```
+
+### OOK Detection
+```cpp
+// On-Off Keying for simple remotes
+radio.beginFSK(freq, 2.4, 0, 50.0, 10, 8, false);
+radio.setOOK(true);
+```
+
+## Signal Analysis
+
+Once a signal is detected, analyze its characteristics:
+
+```cpp
+struct DetectedSignal {
+  float frequency;
+  float rssi;
+  float snr;
+  ModulationType modulation;
+  unsigned long timestamp;
+  float latitude;
+  float longitude;
+};
+
+void analyzeSignal(float freq) {
+  DetectedSignal sig;
+  sig.frequency = freq;
+  sig.rssi = radio.getRSSI();
+  sig.timestamp = millis();
+  
+  // Try different modulations to determine type
+  sig.modulation = identifyModulation(freq);
+  
+  // Log GPS coordinates
+  if (gpsValid) {
+    sig.latitude = gps.location.lat();
+    sig.longitude = gps.location.lng();
+  }
+  
+  // Match against drone database
+  DroneType drone = matchDroneSignature(sig);
+}
+```
+
+## Power Management
+
+For battery-powered operation:
+
+```cpp
+// Enter low power mode between scans
+radio.sleep();
+
+// Wake up for next scan
+radio.standby();
+```
+
+## Interrupt-Based Detection
+
+Use interrupts for efficient detection:
+
+```cpp
+volatile bool signalDetected = false;
+
+void setFlag() {
+  signalDetected = true;
+}
+
+void setup() {
+  radio.setDio1Action(setFlag);
+  radio.startChannelScan();
+}
+
+void loop() {
+  if (signalDetected) {
+    signalDetected = false;
+    // Process detection
+    float rssi = radio.getRSSI();
+    radio.startChannelScan(); // Restart scanning
+  }
+}
+```
+
+## Best Practices
+
+1. **Antenna matching** - Use an antenna tuned for your frequency band
+2. **Scan speed** - Balance between speed and sensitivity
+3. **Noise floor** - Calibrate RSSI threshold for your environment
+4. **Power consumption** - Use sleep modes when not actively scanning
+5. **Frequency accuracy** - The SX1262 has excellent frequency stability
+
+## Resources
+
+- [RadioLib Documentation](https://jgromes.github.io/RadioLib/)
+- [RadioLib GitHub](https://github.com/jgromes/RadioLib)
+- [SX1262 Datasheet](https://www.semtech.com/products/wireless-rf/lora-connect/sx1262)
+- [ESP32-S3 Documentation](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/)

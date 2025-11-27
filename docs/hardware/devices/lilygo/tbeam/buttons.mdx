@@ -1,63 +1,74 @@
 ---
 id: buttons
-title: T-Beam Hardware Buttons
+title: T-Beam S3-Core Button Controls
 sidebar_label: Buttons
-sidebar_position: 1
+sidebar_position: 2
 ---
 
-import Tabs from "@theme/Tabs";
-import TabItem from "@theme/TabItem";
+# Button Controls
 
-<Tabs
-groupId="t-beam buttons"
-queryString="t-beam"
-defaultValue="t-beam"
-values={[
-{label: 'T-Beam', value: 't-beam'},
-{label: 'T-Beam Supreme', value:'t-beam-supreme'},
-]}>
-<TabItem value="t-beam">
+The T-Beam S3-Core features three physical buttons for device control and menu navigation.
 
-## Functionality
+## Button Layout
 
-- **Power Button (left):**
-  - **Long press:** Powers the device on or off.
-- **Reset Button (right):**
-  - **Single press:** Resets the device.
-- **User/Program Button (middle):**
-  - **Long press:** Will signal the device to shutdown after 5 seconds.
-  - **Single press:** Changes the information page displayed on the device's screen.
-  - **Double press:** Sends an adhoc ping of the device's position to the network.
-  - **Triple press:** Disables the device's GPS. Repeat to re-enable. (_This will be indicated on both information screen pages on the device's display as shown below_)
+| Button | Position | Primary Function |
+|--------|----------|------------------|
+| **User/Boot** | Left | Menu navigation and selection |
+| **Power** | Middle | Power on/off |
+| **Reset** | Right | Device restart |
 
-<img src="/img/hardware/GPS-disabled.webp" width="200" align="center-left" />
-<img
-  src="/img/hardware/GPS-disabled-by-button.webp"
-  width="200"
-  align="center-right"
-/>
+## Button Functions
 
-</TabItem>
-<TabItem value = "t-beam-supreme">
+### Power Button (Middle)
 
-## Functionality
+| Action | Result |
+|--------|--------|
+| Long press (3s) | Power on the device |
+| Long press (3s) while on | Power off the device |
 
-- **Power Button (middle):**
-  - **Long press:** Powers the device on or off.
-- **Reset Button (right):**
-  - **Single press:** Resets the device.
-- **User/Program Button (left):**
-  - **Long press:** Will signal the device to shutdown after 5 seconds.
-  - **Single press:** Changes the information page displayed on the device's screen.
-  - **Double press:** Sends an adhoc ping of the device's position to the network.
-  - **Triple press:** Disables the device's GPS. Repeat to re-enable. (_This will be indicated on both information screen pages on the device's display as shown below_)
+### Reset Button (Right)
 
-<img src="/img/hardware/GPS-disabled.webp" width="200" align="center-left" />
-<img
-  src="/img/hardware/GPS-disabled-by-button.webp"
-  width="200"
-  align="center-right"
-/>
+| Action | Result |
+|--------|--------|
+| Single press | Restart the device |
 
-</TabItem>
-</Tabs>
+### User Button (Left)
+
+The User button is the primary control for the Drone Detector interface:
+
+| Action | Result |
+|--------|--------|
+| Single press | Navigate to next menu item |
+| Double press | Select / Confirm current option |
+| Long press (3s) | Start or stop RF scanning |
+| Triple press | Switch between frequency bands |
+
+## Menu Navigation
+
+Use the User button to navigate the Drone Detector menus:
+
+1. **Single press** to move through menu options
+2. **Double press** to select the highlighted option
+3. **Long press** to return to scanning mode from any menu
+
+## Scanning Controls
+
+While in scanning mode:
+
+| Action | Result |
+|--------|--------|
+| Single press | View detection details |
+| Double press | Mark/flag current detection |
+| Long press | Stop scanning, return to menu |
+| Triple press | Quick-switch frequency band |
+
+## Boot Mode
+
+To enter firmware flashing (boot) mode:
+
+1. Power off the device
+2. Press and hold the **User/Boot** button
+3. While holding, plug in USB-C
+4. Release after 2-3 seconds
+
+The device is now in ESP32-S3 firmware download mode.
