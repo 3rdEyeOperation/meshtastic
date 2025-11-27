@@ -22,8 +22,8 @@
 // Pin definitions from platformio.ini build flags
 SX1262 radio = new Module(RADIO_CS, RADIO_DIO1, RADIO_RST, RADIO_BUSY);
 
-// Default scanning frequency (MHz) - 900MHz band center
-const float SCAN_FREQUENCY = FREQ_900_CENTER;
+// Default scanning frequency (MHz) - Start at 900MHz band minimum for sweep
+float currentScanFrequency = FREQ_900_MIN;
 
 // Detection state
 volatile bool receivedFlag = false;
@@ -35,6 +35,10 @@ const unsigned long DISPLAY_UPDATE_INTERVAL = 3000; // 3 seconds
 // Timing for modulation switching
 unsigned long lastModulationSwitch = 0;
 const unsigned long MODULATION_SWITCH_INTERVAL = 10000; // 10 seconds per modulation
+
+// Timing for frequency sweep (for FHSS detection)
+unsigned long lastFrequencySweep = 0;
+const unsigned long FREQUENCY_SWEEP_INTERVAL = SWEEP_DWELL_MS; // Dwell time per channel
 
 // ISR callback for radio receive
 #if defined(ESP32) || defined(ESP8266)
@@ -67,12 +71,15 @@ void setup() {
     Serial.print(F("[DroneDetect] Initializing 900MHz detection ... "));
     displayStatus("Initializing radio...");
     
-    // Initialize drone detection (starts in LoRa mode at 915 MHz)
+    // Initialize drone detection (starts in LoRa mode at band start)
     if (droneDetectionInit(&radio)) {
         Serial.println(F("success!"));
-        Serial.print(F("[DroneDetect] Scanning frequency: "));
-        Serial.print(SCAN_FREQUENCY);
+        Serial.print(F("[DroneDetect] Starting sweep scan from "));
+        Serial.print(FREQ_900_MIN);
+        Serial.print(F(" to "));
+        Serial.print(FREQ_900_MAX);
         Serial.println(F(" MHz"));
+        currentScanFrequency = getCurrentSweepFrequency();
     } else {
         Serial.println(F("failed!"));
         displayError("Radio init failed!");
@@ -92,9 +99,10 @@ void setup() {
         Serial.println(F("[DroneDetect] Listening for RF signals..."));
         Serial.print(F("[DroneDetect] Modulation: "));
         Serial.println(getModulationName(getCurrentModulation()));
-        displayScanningWithModulation(SCAN_FREQUENCY, getModulationName(getCurrentModulation()));
+        displayScanningWithModulation(currentScanFrequency, getModulationName(getCurrentModulation()));
         lastDisplayUpdate = millis();
         lastModulationSwitch = millis();
+        lastFrequencySweep = millis();
     } else {
         Serial.print(F("[DroneDetect] Receive failed, code "));
         Serial.println(state);
@@ -162,8 +170,12 @@ void loop() {
     if (millis() - lastModulationSwitch > MODULATION_SWITCH_INTERVAL) {
         Serial.println(F("[DroneDetect] Switching modulation mode..."));
         
-        // Switch to next modulation type
-        ModulationType newMod = switchToNextModulation(&radio, SCAN_FREQUENCY);
+        // Switch to next modulation type (uses current sweep frequency)
+        ModulationType newMod = switchToNextModulation(&radio, currentScanFrequency);
+        
+        // Reset sweep scan when changing modulation
+        resetSweepScan();
+        currentScanFrequency = getCurrentSweepFrequency();
         
         Serial.print(F("[DroneDetect] Now scanning with: "));
         Serial.println(getModulationName(newMod));
@@ -176,15 +188,31 @@ void loop() {
         }
         
         // Update display with new modulation
-        displayScanningWithModulation(SCAN_FREQUENCY, getModulationName(newMod));
+        displayScanningWithModulation(currentScanFrequency, getModulationName(newMod));
         
         lastModulationSwitch = millis();
         lastDisplayUpdate = millis();
     }
     
+    // Sweep frequency scanning for FHSS detection
+    // This catches drones that frequency hop across the band
+    if (millis() - lastFrequencySweep > FREQUENCY_SWEEP_INTERVAL) {
+        // Move to next frequency in sweep
+        currentScanFrequency = sweepToNextFrequency(&radio);
+        
+        // Restart receive at new frequency
+        int state = radio.startReceive();
+        if (state != RADIOLIB_ERR_NONE) {
+            Serial.print(F("[DroneDetect] Sweep receive failed, code: "));
+            Serial.println(state);
+        }
+        
+        lastFrequencySweep = millis();
+    }
+    
     // Return to scanning display after detection timeout
     if (millis() - lastDisplayUpdate > DISPLAY_UPDATE_INTERVAL) {
-        displayScanningWithModulation(SCAN_FREQUENCY, getModulationName(getCurrentModulation()));
+        displayScanningWithModulation(currentScanFrequency, getModulationName(getCurrentModulation()));
         lastDisplayUpdate = millis();
     }
     

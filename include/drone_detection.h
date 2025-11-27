@@ -50,25 +50,44 @@ const char* getModulationName(ModulationType mod);
 #define FREQ_EXPRESSLRS_900 915.0f    // ExpressLRS 900MHz center
 #define FREQ_CROSSFIRE      915.0f    // TBS Crossfire center
 #define FREQ_FRSKY_900      915.0f    // FrSky 900MHz systems
+#define FREQ_RFD900         915.0f    // RFD900/SiK Radios center
 
 // ============================================================================
-// LoRa Configuration for 900MHz
+// Sweep Scanning Configuration
 // ============================================================================
 
-// LoRa parameters for drone detection
-#define LORA_BANDWIDTH      125.0f    // 125 kHz bandwidth
-#define LORA_SPREADING_FACTOR 9       // SF9 (common for drone links)
-#define LORA_CODING_RATE    7         // 4/7 coding rate
+// Sweep scan parameters for detecting FHSS systems
+#define SWEEP_STEP_KHZ      500.0f    // Frequency step in kHz
+#define SWEEP_DWELL_MS      50        // Dwell time per channel in ms
+#define NUM_SWEEP_CHANNELS  ((FREQ_900_MAX - FREQ_900_MIN) * 1000.0f / SWEEP_STEP_KHZ)
 
 // ============================================================================
-// FSK Configuration for 900MHz
+// LoRa Configuration for 900MHz (ExpressLRS compatible)
 // ============================================================================
 
-// FSK/GFSK parameters for 900MHz drone protocols
-#define FSK_BITRATE         100.0f    // 100 kbps (common for telemetry)
-#define FSK_FREQUENCY_DEV   50.0f     // 50 kHz frequency deviation
-#define FSK_RX_BANDWIDTH    156.2f    // Receiver bandwidth in kHz
-#define FSK_PREAMBLE_LEN    16        // Preamble length in bits
+// LoRa parameters for drone detection - ExpressLRS uses 100-500 kHz BW
+#define LORA_BANDWIDTH_NARROW   100.0f    // 100 kHz (ELRS high rate)
+#define LORA_BANDWIDTH          125.0f    // 125 kHz (standard)
+#define LORA_BANDWIDTH_WIDE     500.0f    // 500 kHz (ELRS max rate)
+#define LORA_SPREADING_FACTOR   9         // SF9 (common for drone links)
+#define LORA_CODING_RATE        7         // 4/7 coding rate
+
+// ============================================================================
+// FSK Configuration for 900MHz (Crossfire/RFD900 compatible)
+// ============================================================================
+
+// FSK/GFSK parameters for 900MHz drone protocols with FHSS
+// TBS Crossfire uses proprietary FSK with ~10 MHz hopping bandwidth
+// RFD900/SiK use configurable FSK with FHSS
+#define FSK_BITRATE             100.0f    // 100 kbps (common for telemetry)
+#define FSK_FREQUENCY_DEV       50.0f     // 50 kHz frequency deviation
+#define FSK_RX_BANDWIDTH        156.2f    // Receiver bandwidth in kHz
+#define FSK_RX_BANDWIDTH_WIDE   250.0f    // Wide bandwidth for FHSS detection
+#define FSK_PREAMBLE_LEN        16        // Preamble length in bits
+
+// FHSS hopping bandwidth for different systems
+#define CROSSFIRE_FHSS_BW       10000.0f  // ~10 MHz hopping for Crossfire
+#define RFD900_FHSS_BW          26000.0f  // Full 902-928 MHz for RFD900
 
 // ============================================================================
 // OOK Configuration for 900MHz
@@ -175,5 +194,33 @@ ModulationType switchToNextModulation(SX1262* radio, float frequency);
  * @return true if frequency is in 900MHz band
  */
 bool isValid900MHzFrequency(float frequency);
+
+// ============================================================================
+// Sweep Scanning Functions (for FHSS detection)
+// ============================================================================
+
+/**
+ * Get the current sweep scan frequency
+ * @return Current frequency in MHz being scanned
+ */
+float getCurrentSweepFrequency();
+
+/**
+ * Advance to next frequency in sweep scan
+ * @param radio Pointer to SX1262 radio instance
+ * @return New frequency in MHz after stepping
+ */
+float sweepToNextFrequency(SX1262* radio);
+
+/**
+ * Reset sweep scan to starting frequency
+ */
+void resetSweepScan();
+
+/**
+ * Check if sweep scan has completed full band
+ * @return true if full band has been scanned
+ */
+bool isSweepComplete();
 
 #endif // DRONE_DETECTION_H

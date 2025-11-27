@@ -23,34 +23,67 @@ static ModulationType currentModulation = MOD_LORA;
 // Radio initialization status
 static bool isInitialized = false;
 
+// Current sweep frequency for FHSS detection
+static float currentSweepFrequency = FREQ_900_MIN;
+static bool sweepComplete = false;
+
 // ============================================================================
 // Known Drone Signatures Database (900MHz Band)
 // ============================================================================
 
 /**
  * Database of known drone protocol signatures in the 900MHz band
- * These signatures are used to identify specific drone control systems
+ * Based on real-world drone systems:
+ * - ExpressLRS (ELRS): LoRa (CSS), 100-500 kHz bandwidth
+ * - TBS Crossfire (CRSF): Proprietary FSK with FHSS, ~10 MHz hopping
+ * - RFD900/SiK Radios: FSK with FHSS, configurable bandwidth
+ * - FrSky R9: LoRa-based, 200 kHz bandwidth
  */
 static const DroneSignature knownSignatures[] = {
-    // ExpressLRS 900MHz - Popular open-source long-range system
+    // ExpressLRS 900MHz - Open-source LoRa system
+    // Uses LoRa (Chirp Spread Spectrum), 100-500 kHz channel bandwidth
+    // Ultra-fast update rates, frequency hopping across 902-928 MHz
     {
         .name = "ExpressLRS 900",
         .frequencyMin = 902.0f,
         .frequencyMax = 928.0f,
         .modulation = MOD_LORA,
-        .bandwidth = 500.0f,
+        .bandwidth = 500.0f,       // 100-500 kHz depending on rate
         .minRSSI = -120.0f
     },
+    // ExpressLRS 900MHz Narrow Mode
+    {
+        .name = "ELRS 900 Narrow",
+        .frequencyMin = 902.0f,
+        .frequencyMax = 928.0f,
+        .modulation = MOD_LORA,
+        .bandwidth = 100.0f,       // 100 kHz for high rate mode
+        .minRSSI = -115.0f
+    },
     // TBS Crossfire - Commercial long-range system
+    // Proprietary FSK with FHSS, ~10 MHz channel hopping bandwidth
+    // Extreme long range, low latency, robust link
     {
         .name = "TBS Crossfire",
         .frequencyMin = 902.0f,
         .frequencyMax = 928.0f,
-        .modulation = MOD_LORA,
-        .bandwidth = 500.0f,
+        .modulation = MOD_FSK,     // Proprietary FSK with FHSS
+        .bandwidth = 10000.0f,     // ~10 MHz hopping bandwidth
         .minRSSI = -130.0f
     },
+    // RFD900 / SiK Radios - Long-range telemetry
+    // Proprietary FSK with FHSS, configurable parameters
+    // Used for telemetry and command links on larger UAVs
+    {
+        .name = "RFD900/SiK",
+        .frequencyMin = 902.0f,
+        .frequencyMax = 928.0f,
+        .modulation = MOD_FSK,     // FSK with FHSS
+        .bandwidth = 26000.0f,     // Full band hopping (configurable)
+        .minRSSI = -121.0f
+    },
     // FrSky R9 System - 900MHz long-range
+    // LoRa-based modulation, ~200 kHz bandwidth
     {
         .name = "FrSky R9",
         .frequencyMin = 902.0f,
@@ -59,13 +92,13 @@ static const DroneSignature knownSignatures[] = {
         .bandwidth = 200.0f,
         .minRSSI = -120.0f
     },
-    // Generic FSK telemetry link
+    // Generic FSK telemetry link (catch-all)
     {
         .name = "FSK Telemetry",
         .frequencyMin = 902.0f,
         .frequencyMax = 928.0f,
         .modulation = MOD_FSK,
-        .bandwidth = 100.0f,
+        .bandwidth = 156.0f,
         .minRSSI = -110.0f
     },
     // Simple OOK remote control
@@ -74,7 +107,7 @@ static const DroneSignature knownSignatures[] = {
         .frequencyMin = 902.0f,
         .frequencyMax = 928.0f,
         .modulation = MOD_OOK,
-        .bandwidth = 50.0f,
+        .bandwidth = 58.0f,
         .minRSSI = -100.0f
     }
 };
@@ -361,4 +394,62 @@ bool analyzeDroneSignal(float rssi, float snr, float freqError,
     Serial.println(signal->isDroneSignature ? "Yes" : "No");
     
     return signal->isDroneSignature;
+}
+
+// ============================================================================
+// Sweep Scanning Functions (for FHSS detection)
+// ============================================================================
+
+float getCurrentSweepFrequency() {
+    return currentSweepFrequency;
+}
+
+float sweepToNextFrequency(SX1262* radio) {
+    if (radio == NULL) {
+        return currentSweepFrequency;
+    }
+    
+    // Step to next frequency
+    currentSweepFrequency += (SWEEP_STEP_KHZ / 1000.0f);  // Convert kHz to MHz
+    
+    // Check if we've reached end of band
+    if (currentSweepFrequency > FREQ_900_MAX) {
+        currentSweepFrequency = FREQ_900_MIN;
+        sweepComplete = true;
+        Serial.println(F("[DroneDetect] Sweep scan complete, restarting..."));
+    }
+    
+    // Reconfigure radio at new frequency based on current modulation
+    int state;
+    switch (currentModulation) {
+        case MOD_LORA:
+            state = configureLoRaMode(radio, currentSweepFrequency);
+            break;
+        case MOD_FSK:
+            state = configureFSKMode(radio, currentSweepFrequency);
+            break;
+        case MOD_OOK:
+            state = configureOOKMode(radio, currentSweepFrequency);
+            break;
+        default:
+            state = configureLoRaMode(radio, currentSweepFrequency);
+            break;
+    }
+    
+    if (state != RADIOLIB_ERR_NONE) {
+        Serial.print(F("[DroneDetect] Sweep frequency change failed, code: "));
+        Serial.println(state);
+    }
+    
+    return currentSweepFrequency;
+}
+
+void resetSweepScan() {
+    currentSweepFrequency = FREQ_900_MIN;
+    sweepComplete = false;
+    Serial.println(F("[DroneDetect] Sweep scan reset to start"));
+}
+
+bool isSweepComplete() {
+    return sweepComplete;
 }
