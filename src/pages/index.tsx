@@ -49,10 +49,10 @@ function Home() {
                   class="h-8 w-8"
                   style={{ color: "var(--ifm-color-primary)" }}
                 />
-                <h4 class="text-lg font-bold">Multi-Frequency Scanning</h4>
+                <h4 class="text-lg font-bold">Sub-GHz RF Scanning</h4>
               </div>
               <p class="text-center max-w-xs">
-                Scan across 433 MHz, 868 MHz, and 915 MHz frequencies using the SX1262 LoRa transceiver.
+                Scan your device's frequency band (433, 868, or 915 MHz variant) using the SX1262 LoRa transceiver.
               </p>
             </div>
             <div class="flex flex-col items-center">

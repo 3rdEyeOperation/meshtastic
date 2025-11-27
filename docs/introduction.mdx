@@ -67,12 +67,19 @@ This project uses [RadioLib](https://github.com/jgromes/RadioLib), a universal w
 
 ## Limitations
 
-The T-Beam S3-Core with SX1262 operates in sub-GHz bands (433/868/915 MHz). Many consumer drones operate on 2.4 GHz or 5.8 GHz, which are **not directly detectable** by this hardware. However, some drones and drone control systems do use sub-GHz frequencies for:
+:::warning Important Hardware Limitation
+The T-Beam S3-Core with SX1262 operates **only in sub-GHz bands** (433, 868, or 915 MHz depending on your device variant). 
 
-- Long-range control links
-- Telemetry downlinks
-- Remote ID broadcasts
-- Some FPV systems
+**Most consumer drones (DJI, Skydio, etc.) operate on 2.4 GHz or 5.8 GHz, which cannot be detected by this hardware.** Detection of these frequencies requires different radio hardware.
+:::
+
+This project is designed to detect drones and drone systems that use sub-GHz frequencies, including:
+
+- Long-range FPV control links (ExpressLRS, Crossfire, mLRS)
+- Telemetry downlinks (SiK, MAVLink radios)
+- Agricultural and commercial drone systems
+- Custom/DIY drone builds using LoRa
+- Some older or specialized drone control systems
 
 ## Getting Started
 

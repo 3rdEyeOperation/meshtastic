@@ -44,7 +44,8 @@ The Semtech SX1262 in the T-Beam S3-Core provides:
 #include <RadioLib.h>
 
 // SX1262 pin configuration for T-Beam S3-Core
-SX1262 radio = new Module(LORA_CS, LORA_IRQ, LORA_RST, LORA_BUSY);
+Module mod(LORA_CS, LORA_IRQ, LORA_RST, LORA_BUSY);
+SX1262 radio(&mod);
 
 void setup() {
   // Initialize with frequency, bandwidth, SF, CR, sync word, power

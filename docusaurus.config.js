@@ -6,8 +6,8 @@ require("dotenv").config();
 const config = {
   title: "Drone Detector",
   tagline:
-    "An open source drone detection system using T-Beam S3-Core and RadioLib for multi-frequency RF scanning",
-  url: "https://drone-detector.example.com",
+    "An open source drone detection system using T-Beam S3-Core and RadioLib for sub-GHz RF scanning",
+  url: "https://drone-detector.org",
   baseUrl: "/",
   trailingSlash: true,
   onBrokenLinks: "throw",

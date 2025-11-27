@@ -11,6 +11,10 @@ description: How to use the Drone Detector for scanning and detecting drone sign
 
 This guide covers how to operate the Drone Detector using the button interface and menu system.
 
+:::warning Hardware Frequency Limitation
+Your T-Beam S3-Core can only detect signals in its specific frequency band (433, 868, or 915 MHz). Most consumer drones use 2.4 GHz or 5.8 GHz which **cannot be detected** by this hardware. See [Drone Frequencies](/docs/drone-frequencies) for details on what can be detected.
+:::
+
 ## Button Controls
 
 The T-Beam S3-Core has three buttons for device control:
@@ -104,10 +108,6 @@ The detector matches signals against known drone RF signatures:
 | Long-range FPV | 433 MHz | LoRa/FSK | Custom builds |
 | Agricultural drones | 868/915 MHz | LoRa | Telemetry links |
 | Racing drones | Various | FSK | Some control systems |
-
-:::note
-Many consumer drones use 2.4 GHz or 5.8 GHz which cannot be detected by this hardware. This device focuses on sub-GHz drone communications.
-:::
 
 ## Settings Menu
 
