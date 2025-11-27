@@ -126,6 +126,116 @@ void displayDetection(float rssi, float snr, float freqError) {
     tft.println("SIGNAL");
 }
 
+void displayScanningWithModulation(float frequency, const char* modulation) {
+    tft.fillScreen(COLOR_BG);
+    
+    // Header
+    tft.setTextColor(COLOR_TITLE, COLOR_BG);
+    tft.setTextSize(2);
+    tft.setCursor(10, 5);
+    tft.println("SCANNING");
+    
+    // Frequency display
+    tft.setTextColor(COLOR_TEXT, COLOR_BG);
+    tft.setTextSize(1);
+    tft.setCursor(10, 35);
+    tft.print("Frequency: ");
+    tft.print(frequency, 1);
+    tft.println(" MHz");
+    
+    // Modulation type
+    tft.setCursor(10, 50);
+    tft.print("Modulation: ");
+    tft.setTextColor(COLOR_SUCCESS, COLOR_BG);
+    tft.println(modulation);
+    tft.setTextColor(COLOR_TEXT, COLOR_BG);
+    
+    // Detection count
+    tft.setCursor(10, 65);
+    tft.print("Detections: ");
+    tft.println(detectionCount);
+    
+    // Status
+    tft.setTextColor(COLOR_SUCCESS, COLOR_BG);
+    tft.setCursor(10, 85);
+    tft.println("Listening for RF signals...");
+    
+    // Visual indicator
+    tft.drawRect(10, 105, DISPLAY_WIDTH - 20, 15, COLOR_SUCCESS);
+}
+
+void displayDroneDetection(float rssi, float snr, float freqError, 
+                           const char* modulation, const char* droneType, 
+                           uint8_t confidence) {
+    detectionCount++;
+    
+    tft.fillScreen(COLOR_BG);
+    
+    // Alert header - change color based on drone detection
+    bool isDrone = (droneType != NULL && confidence > 50);
+    tft.setTextColor(isDrone ? COLOR_ALERT : COLOR_WARNING, COLOR_BG);
+    tft.setTextSize(2);
+    tft.setCursor(10, 2);
+    tft.println(isDrone ? "DRONE!" : "RF SIGNAL");
+    
+    // Signal details
+    tft.setTextColor(COLOR_TEXT, COLOR_BG);
+    tft.setTextSize(1);
+    
+    // Modulation type
+    tft.setCursor(10, 25);
+    tft.print("Mod: ");
+    tft.setTextColor(COLOR_SUCCESS, COLOR_BG);
+    tft.println(modulation);
+    tft.setTextColor(COLOR_TEXT, COLOR_BG);
+    
+    // RSSI
+    tft.setCursor(10, 38);
+    tft.print("RSSI: ");
+    tft.setTextColor(rssi > -70 ? COLOR_SUCCESS : COLOR_WARNING, COLOR_BG);
+    tft.print(rssi, 1);
+    tft.setTextColor(COLOR_TEXT, COLOR_BG);
+    tft.println(" dBm");
+    
+    // SNR
+    tft.setCursor(10, 51);
+    tft.print("SNR:  ");
+    tft.setTextColor(snr > 0 ? COLOR_SUCCESS : COLOR_WARNING, COLOR_BG);
+    tft.print(snr, 1);
+    tft.setTextColor(COLOR_TEXT, COLOR_BG);
+    tft.println(" dB");
+    
+    // Freq Error
+    tft.setCursor(10, 64);
+    tft.print("Freq Error: ");
+    tft.print(freqError, 0);
+    tft.println(" Hz");
+    
+    // Drone type (if identified)
+    if (droneType != NULL) {
+        tft.setCursor(10, 77);
+        tft.print("Type: ");
+        tft.setTextColor(COLOR_TITLE, COLOR_BG);
+        tft.println(droneType);
+        tft.setTextColor(COLOR_TEXT, COLOR_BG);
+    }
+    
+    // Confidence
+    tft.setCursor(10, 90);
+    tft.print("Confidence: ");
+    tft.setTextColor(confidence > 70 ? COLOR_SUCCESS : 
+                     (confidence > 40 ? COLOR_WARNING : COLOR_ALERT), COLOR_BG);
+    tft.print(confidence);
+    tft.println("%");
+    
+    // Visual alert bar
+    uint16_t barColor = isDrone ? COLOR_ALERT : COLOR_WARNING;
+    tft.fillRect(10, 108, DISPLAY_WIDTH - 20, 12, barColor);
+    tft.setTextColor(COLOR_BG, barColor);
+    tft.setCursor((DISPLAY_WIDTH - 36) / 2, 110);
+    tft.println(isDrone ? "DRONE" : "SIGNAL");
+}
+
 void displayError(const char* message) {
     tft.fillScreen(COLOR_BG);
     

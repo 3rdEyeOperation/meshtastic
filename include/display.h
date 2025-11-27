@@ -39,12 +39,32 @@ void displaySplash();
 void displayScanning(float frequency);
 
 /**
+ * Display the main scanning status screen with modulation info
+ * @param frequency Current scanning frequency in MHz
+ * @param modulation Current modulation type name
+ */
+void displayScanningWithModulation(float frequency, const char* modulation);
+
+/**
  * Display RF signal detection information
  * @param rssi Signal strength in dBm
  * @param snr Signal-to-noise ratio in dB
  * @param freqError Frequency error in Hz
  */
 void displayDetection(float rssi, float snr, float freqError);
+
+/**
+ * Display RF signal detection with modulation and drone type information
+ * @param rssi Signal strength in dBm
+ * @param snr Signal-to-noise ratio in dB
+ * @param freqError Frequency error in Hz
+ * @param modulation Detected modulation type name
+ * @param droneType Identified drone type/protocol (NULL if unknown)
+ * @param confidence Detection confidence percentage (0-100)
+ */
+void displayDroneDetection(float rssi, float snr, float freqError, 
+                           const char* modulation, const char* droneType, 
+                           uint8_t confidence);
 
 /**
  * Display an error message
