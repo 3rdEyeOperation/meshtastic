@@ -17,6 +17,7 @@ The Drone Detector identifies drones by matching their RF communication signatur
 - **GPS logging** - Record location of detected signals
 - **Button-based interface** - Standalone operation without external devices
 - **RadioLib integration** - Comprehensive RF protocol support
+- **TFT Display Support** - Visual feedback via TFT_eSPI library for real-time signal monitoring
 
 ## Hardware
 
@@ -27,6 +28,31 @@ The Drone Detector identifies drones by matching their RF communication signatur
 | MCU | ESP32-S3 |
 | Radio | Semtech SX1262 |
 | GPS | NEO-M10S or Quectel L76K |
+| Display | TFT LCD (ST7789 driver, optional) |
+
+## TFT Display
+
+The project supports TFT displays using the TFT_eSPI library. The display shows:
+
+- **Splash Screen** - Startup information
+- **Scanning Mode** - Current frequency and detection count
+- **Detection Alert** - Signal strength (RSSI), SNR, and frequency error
+- **Error Messages** - Initialization failures
+
+### Default TFT Pin Configuration
+
+The following pins are configured in `platformio.ini` for external TFT display:
+
+| Pin | Function |
+|-----|----------|
+| GPIO19 | MOSI |
+| GPIO18 | SCLK |
+| GPIO5 | CS |
+| GPIO16 | DC |
+| GPIO23 | RST |
+| GPIO4 | Backlight |
+
+To customize pins for your display, modify the `build_flags` in `platformio.ini`.
 
 ## Detection Method
 
@@ -80,14 +106,17 @@ pio device monitor
 ```
 ├── platformio.ini    # PlatformIO configuration
 ├── src/
-│   └── main.cpp      # Main firmware source
-├── include/          # Header files
+│   ├── main.cpp      # Main firmware source
+│   └── display.cpp   # TFT display implementation
+├── include/
+│   └── display.h     # Display module header
 └── lib/              # Project-specific libraries
 ```
 
 ## Resources
 
 - [RadioLib Library](https://github.com/jgromes/RadioLib)
+- [TFT_eSPI Library](https://github.com/Bodmer/TFT_eSPI)
 - [LILYGO T-Beam Supreme](https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series)
 - [SX1262 Datasheet](https://www.semtech.com/products/wireless-rf/lora-connect/sx1262)
 
