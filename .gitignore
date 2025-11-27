@@ -29,3 +29,4 @@ gen
 *.vsix
 *.code-workspace
 .trunk/
+_codeql_detected_source_root
