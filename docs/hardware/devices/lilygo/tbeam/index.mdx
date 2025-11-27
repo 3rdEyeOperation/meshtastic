@@ -1,124 +1,73 @@
 ---
 id: tbeam
-title: LILYGO® TTGO T-Beam Devices
-sidebar_label: T-Beam
-sidebar_position: 2
+title: LILYGO® T-Beam S3-Core
+sidebar_label: T-Beam S3-Core
+sidebar_position: 1
 ---
 
-import Tabs from "@theme/Tabs";
-import TabItem from "@theme/TabItem";
+# T-Beam S3-Core
 
-All T-beam models (with the exception of the S3-Core) have an 18650 size battery holder on the rear of the device. This is designed to the original specification of the 18650 and only fits unprotected flat top 18650 cells. Button top and protected cells are typically longer than 65mm, often approaching 70mm.
+The LILYGO T-Beam S3-Core is the primary hardware platform for the Drone Detector project.
 
-Further information on the LILYGO® T-Beam devices can be found on LILYGO®'s [GitHub page](https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series).
+## Specifications
 
-<Tabs
-groupId="t-beam"
-queryString="t-beam"
-defaultValue="supreme"
-values={[
-{label: 'S3-Core', value: 's3core'},
-{label: 'Supreme', value: 'supreme'}
-]}>
+| Component | Specification |
+|-----------|---------------|
+| **MCU** | ESP32-S3 (WiFi & Bluetooth 5 LE) |
+| **LoRa Transceiver** | Semtech SX1262 |
+| **Frequency Options** | 433 MHz, 868 MHz, or 915 MHz |
+| **GPS Module** | NEO-M10S or Quectel L76K |
+| **Connector** | USB-C |
+| **Antenna** | U.FL connector |
 
-<TabItem value = "s3core">
+## Features for Drone Detection
 
-## T-Beam S3 Core
+- **SX1262 Radio** - Excellent sensitivity down to -148 dBm
+- **Wide frequency range** - 150 MHz to 960 MHz capability
+- **Multiple modulation modes** - LoRa, FSK, GFSK, MSK, OOK
+- **Channel Activity Detection (CAD)** - Hardware-accelerated signal detection
+- **RSSI measurement** - 1 dB resolution for signal strength
+- **GPS integration** - Log location of detected signals
 
-- **MCU**
-- ESP32-S3 (WiFi & Bluetooth 5LE)
-- **LoRa Transceiver**
-  - **Semtech SX1262** (improved performance)
-- **Frequency options**
-  - 433 MHz
-  - 868 MHz
-  - 915 MHz
-- **Navigation Module**
-  - **NEO-M10S - GNSS receiver (supports GPS, GLONASS, Galileo, BeiDou)** (better GPS sensitivity)
-  - **Quectel L76K - (supports GPS, Beidou, GLONASS)** (lower price)
-- **Connectors**
-  - USB-C
-  - Antenna: U.FL antenna connector
+## Buttons
 
-### Features
+| Button | Location | Function |
+|--------|----------|----------|
+| **Boot** | Left | User button for menu navigation |
+| **Power** | Middle | Long press to power on/off |
+| **Reset** | Right | Single press to restart |
 
-- SoftRF preinstalled (flashing to Meshtastic required)
-- Boot and Reset switches
-- Can be used standalone without 'Supreme' daughterboard in a headless configuration
+### Button Actions for Drone Detector
 
-### Resources
+| Action | Function |
+|--------|----------|
+| Single press (User) | Navigate menu / Next item |
+| Double press (User) | Select / Confirm |
+| Long press (User) | Start/Stop scanning |
+| Triple press (User) | Switch frequency band |
 
-- Firmware file: `firmware-tbeam-s3-core-X.X.X.xxxxxxx.bin`
-- Purchase Links:
-  - International
-    - [LilyGO Store](https://msh.to/tbeam-s3-core/)
+## Flashing Firmware
 
-![T-Beam S3-Core](/img/hardware/T-BEAM-S3Core.webp)
+To flash the Drone Detector firmware:
 
-</TabItem>
-
-<TabItem value = "supreme">
-
-## T-Beam Supreme
-
-- **MCU**
-- ESP32-S3 (WiFi & Bluetooth 5LE)
-- **LoRa Transceiver**
-  - **Semtech SX1262** (improved performance)
-- **Frequency options**
-  - 433 MHz
-  - 868 MHz
-  - 915 MHz
-- **Navigation Module**
-  - **NEO-M10S - GNSS receiver (supports GPS, GLONASS, Galileo, BeiDou)** (better GPS sensitivity)
-  - **Quectel L76K - (supports GPS, Beidou, GLONASS)** (lower price)
-- **Connectors**
-  - USB-C
-  - Antenna: U.FL antenna connector
-
-### Features
-
-- Includes T-Beam S3-Core Module
-- SoftRF preinstalled (flashing to Meshtastic required)
-- Power, Boot and Reset switches
-- 1.3" OLED included
-- BME280 Air pressure sensor
-- QMI8658 IMU
-- QMC6310 Magnetometer
-- PCF8563 RTC
-- Micro-SD reader (not implemented in Meshtastic)
-
-### Flashing
-
-To flash ESP32-S3 devices like the T-Beam Supreme, you typically need to place them in Espressif's firmware download mode. Use the "1200bps reset" button in the web flasher to do this. If this method does not work for any reason, you can follow the manual process below.
+1. Unplug the device
+2. Press and hold the **BOOT** button
+3. Plug in the USB-C cable while holding BOOT
+4. Release BOOT after 2-3 seconds
+5. The device is now in firmware download mode
+6. Flash using ESP-IDF, PlatformIO, or Arduino IDE
 
 :::warning
-
-Do not proceed unless an antenna is connected to avoid possible damage to the device's radio.
-
+Always connect an antenna before powering on to avoid damaging the radio!
 :::
 
-The following process will manually place the device into the Espressif Firmware Download mode:
+## Purchase Links
 
-1. Unplug the device.
-2. Press and hold the BOOT button.
-3. Plug device in.
-4. After 2-3 seconds, release the BOOT button.
+- [LILYGO Official Store](https://www.lilygo.cc/)
+- [AliExpress - LILYGO Store](https://lilygo.aliexpress.com/)
 
-With the device now in the Espressif Firmware Download mode, you can proceed with flashing using one of the supported flashing methods. It's generally recommended to use the [Web Flasher](https://flasher.meshtastic.org/). You can select "Tbeam S3 Core from the device drop-down.
+## Resources
 
-### Resources
-
-- Firmware file: `firmware-tbeam-s3-core-X.X.X.xxxxxxx.bin`
-- Purchase Links:
-  - International
-    - [LilyGO Store](https://msh.to/tbeam-s3-core/)
-  - US
-    - [Rokland NEO-M10S](https://store.rokland.com/products/lilygo-t-beam-supreme-esp32-s3-lora-development-board-sx1262-915mhz-gps-l76k-or-u-blox?variant=41051191378003)
-    - [Rokland Quectel L76K](https://store.rokland.com/products/lilygo-t-beam-supreme-esp32-s3-lora-development-board-sx1262-915mhz-gps-l76k-or-u-blox?variant=41051191345235)
-
-![T-Beam Supreme](/img/hardware/T-BEAM-S3-Supreme.webp)
-
-</TabItem>
-
-</Tabs>
+- [LILYGO GitHub - T-Beam Series](https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series)
+- [RadioLib Library](https://github.com/jgromes/RadioLib)
+- [SX1262 Datasheet](https://www.semtech.com/products/wireless-rf/lora-connect/sx1262)

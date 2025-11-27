@@ -1,41 +1,29 @@
 ---
 id: lilygo
-title: LILYGO® Devices
+title: LILYGO® T-Beam S3-Core
 sidebar_label: LILYGO®
-sidebar_position: 2
+sidebar_position: 1
 ---
 
-## [T-Beam](./tbeam/)
+# LILYGO® T-Beam S3-Core
 
-Boards complete with GPS, 18650 battery holder, and optional screen.
+The T-Beam S3-Core is the supported hardware platform for the Drone Detector project.
 
-| Name                                     | MCU      | Radio  |     WiFi     | BT  | GPS |
-| :--------------------------------------- | :------- | :----- | :----------: | :-: | :-: |
-| [T-Beam S3-Core](./tbeam/?t-beam=s3core) | ESP32-S3 | SX1262 | 2.4GHz b/g/n | 5.0 | YES |
-| [T-BeamSUPREME](./tbeam/?t-beam=supreme) | ESP32-S3 | SX1262 | 2.4GHz b/g/n | 5.0 | YES |
+## [T-Beam S3-Core](./tbeam/)
 
-## [T-Echo](./techo/)
+| Component | Specification |
+|-----------|---------------|
+| MCU | ESP32-S3 (WiFi & Bluetooth 5 LE) |
+| Radio | Semtech SX1262 |
+| Frequencies | 433 MHz, 868 MHz, or 915 MHz |
+| GPS | NEO-M10S or Quectel L76K |
+| Interface | USB-C, Boot/Reset/Power buttons |
 
-All-in-one unit with E-Ink screen, GPS and battery in injection-molded case. Features the low-power nRF52840 for long battery life.
+### Key Features
 
-| Name               | MCU      | Radio  | WiFi | BT  | GPS |
-| :----------------- | :------- | :----- | :--: | :-: | :-: |
-| [T-Echo](./techo/) | nRF52840 | SX1262 |  NO  | 5.0 | YES |
+- **SX1262 LoRa Transceiver** - Excellent sensitivity for signal detection
+- **ESP32-S3 MCU** - Powerful dual-core processor
+- **Integrated GPS** - Log coordinates of detected signals
+- **Low power** - Suitable for portable/field use
 
-## [LoRa32](./lora/)
-
-Inexpensive basic ESP32-based boards.
-
-| Name                                 | MCU      | Radio                                   |     WiFi     | BT  | GPS |
-| :----------------------------------- | :------- | :-------------------------------------- | :----------: | :-: | :-: |
-| [LoRa32 T3-S3](./lora/?t-lora=S3-v1) | ESP32-S3 | SX1262<br/>SX1276<br/>SX1280<br/>LR1121 | 2.4GHz b/g/n | 5.0 | NO  |
-
-## [T-Deck](./tdeck/)
-
-Standalone device with screen and keyboard.
-
-| Name                                     | MCU         | Radio  | WiFi | BT  | GPS |
-| :--------------------------------------- | :---------- | :----- | :--: | :-: | :-: |
-| [T-Deck](./tdeck/?t-deck=t-deck)         | ESP32-S3FN8 | SX1262 | YES  | 5.0 | NO  |
-| [T-Deck Plus](./tdeck/?t-deck=t-deck)    | ESP32-S3FN8 | SX1262 | YES  | 5.0 | YES |
-| [T-Deck Pro](./tdeck/?t-deck=t-deck-pro) | ESP32-S3FN8 | SX1262 | YES  | 5.0 | YES |
+For detailed specifications and button controls, see the [T-Beam documentation](./tbeam/).
