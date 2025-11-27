@@ -356,7 +356,8 @@ bool analyzeDroneSignal(float rssi, float snr, float freqError,
     }
     
     // Initialize signal structure
-    signal->frequency = FREQ_900_CENTER;
+    // Use current sweep frequency for proper signature matching during sweep scan
+    signal->frequency = currentSweepFrequency;
     signal->rssi = rssi;
     signal->snr = snr;
     signal->freqError = freqError;
@@ -369,7 +370,7 @@ bool analyzeDroneSignal(float rssi, float snr, float freqError,
     signal->confidence = calculateConfidence(rssi, snr, freqError);
     
     // Try to match against known drone signatures
-    // Use the center frequency for matching (signal->frequency)
+    // Uses current sweep frequency for accurate frequency-based matching
     int matchIndex = matchSignature(rssi, signal->frequency, currentMod);
     
     if (matchIndex >= 0) {
@@ -400,6 +401,9 @@ bool analyzeDroneSignal(float rssi, float snr, float freqError,
 // Sweep Scanning Functions (for FHSS detection)
 // ============================================================================
 
+// Track sweep channel position
+static uint16_t currentSweepChannel = 0;
+
 float getCurrentSweepFrequency() {
     return currentSweepFrequency;
 }
@@ -411,12 +415,17 @@ float sweepToNextFrequency(SX1262* radio) {
     
     // Step to next frequency
     currentSweepFrequency += (SWEEP_STEP_KHZ / 1000.0f);  // Convert kHz to MHz
+    currentSweepChannel++;
     
-    // Check if we've reached end of band
-    if (currentSweepFrequency > FREQ_900_MAX) {
+    // Check if we've reached end of band (using NUM_SWEEP_CHANNELS for validation)
+    if (currentSweepChannel >= (uint16_t)NUM_SWEEP_CHANNELS || 
+        currentSweepFrequency > FREQ_900_MAX) {
         currentSweepFrequency = FREQ_900_MIN;
+        currentSweepChannel = 0;
         sweepComplete = true;
-        Serial.println(F("[DroneDetect] Sweep scan complete, restarting..."));
+        Serial.print(F("[DroneDetect] Sweep scan complete ("));
+        Serial.print((uint16_t)NUM_SWEEP_CHANNELS);
+        Serial.println(F(" channels), restarting..."));
     }
     
     // Reconfigure radio at new frequency based on current modulation
@@ -446,6 +455,7 @@ float sweepToNextFrequency(SX1262* radio) {
 
 void resetSweepScan() {
     currentSweepFrequency = FREQ_900_MIN;
+    currentSweepChannel = 0;
     sweepComplete = false;
     Serial.println(F("[DroneDetect] Sweep scan reset to start"));
 }
